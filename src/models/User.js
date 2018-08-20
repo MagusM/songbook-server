@@ -1,38 +1,45 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
-
-function hashPassword (user, options) {
-  const SALT_ROUNDS = 10;
-
-  return bcrypt.hash(user.password, SALT_ROUNDS).then((hash) => {
-    user.setDataValue('password', hash);
-  });
-  
+function hashPassword (password, options) {
+    const SALT_ROUNDS = 10;
+    return bcrypt.hash(password, SALT_ROUNDS)
+            .then((hashed) => {
+                return hashed;
+            });
 }
 
-module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
-      email: {
-        type: DataTypes.STRING,
+const UserSchema = new Schema({
+    email: {
+        type: String,
         unique: true
-      },
-      password: DataTypes.STRING
-    }, {
-      charset: 'utf8',
-      hooks: {
-        beforeCreate: hashPassword,
-        beforeUpdate: hashPassword
-      }
+    },
+    password: {
+        type: String
+    }
+});
+
+const User = mongoose.model('User', UserSchema);
+User.prototype.comparePassword = (password, hash) => {
+    return bcrypt.compareSync(password, hash);
+};
+
+module.exports = User;
+module.exports.hashPassword = hashPassword;
+module.exports.createUser = async (user, callback) => {
+    hashPassword(user.password)
+        .then((hashed) => {
+            user.password = hashed;
+            user.save(callback);
+    });    
+};
+module.exports.comparePassword = async (candidatePassword, hash, callback) => {
+    bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
+        callback(null, isMatch);
     });
-    User.associate = function(models) {
-      // associations can be defined here
-    };
+};
 
-    User.prototype.comparePassword = function (password, hash) {
-      console.log('pass', password);
-      console.log('hash', hash);
-      return bcrypt.compareSync(password, hash);
-    };
-
-    return User;
-  };
+module.exports.getUserById = async (id, callback) => {
+    User.findById(id, callback);
+};

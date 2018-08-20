@@ -1,12 +1,15 @@
-const {Song} = require('../models');
+const Song = require('../models/Song');
 
 module.exports = {
     async index (req, res) {
         try {
-            const song = await Song.findAll({
-                where: {}
-            }); // will return all songs
-            res.send(song);
+            Song.find({}, (err, data) => {
+                if (err) {
+                    throw err;
+                }
+
+                res.send(data);
+            });
         } catch (error) {
             res.status(500).send({
                 error: 'An Error has accured with songs.'
@@ -15,9 +18,10 @@ module.exports = {
     },
     async songById(req, res) {
         try {
-            const song = await Song.find({
-                where: req.params
-            });
+            // const song = await Song.find({
+            //     where: req.params
+            // });
+            const song = {};
             if (!song) {
                 res.send(500).send({
                     error: 'Failed find song.'
@@ -33,7 +37,8 @@ module.exports = {
     },
     async save (req, res) {
         try {
-            const song = await Song.create(req.body);
+            // const song = await Song.create(req.body);
+            const song = {};
             res.send(song);
         } catch (error) {
             res.status(500).send({

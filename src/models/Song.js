@@ -1,19 +1,31 @@
-'use strict';
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-module.exports = (sequelize, DataTypes) => {
-  var Song = sequelize.define('Song', {
-    title: DataTypes.STRING,
-    artist: DataTypes.STRING,
-    genre: DataTypes.STRING,
-    album: DataTypes.STRING,
-    albumImageUrl: DataTypes.TEXT,
-    youtubeId: DataTypes.STRING,
-    lyrics: DataTypes.TEXT,
-    tab: DataTypes.TEXT
-  }, {});
-  Song.associate = function(models) {
-    // associations can be defined here
-  };
-  
-  return Song;
-};
+const SongSchema = new Schema({
+    title: {
+        type: String
+    },
+    artist: {
+        type: String
+    },
+    genre: {
+        type: String
+    },
+    album: {
+        type: String
+    },
+    albumImageUrl: {
+        type: String
+    },
+    youtubeId: {
+        type: String
+    },
+    lyrics: {
+        type: String
+    },
+    tab: {
+        type: String
+    }
+});
+
+module.exports = mongoose.model('Song', SongSchema);

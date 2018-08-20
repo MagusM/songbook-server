@@ -1,5 +1,5 @@
 const AuthenticationController = require('./controllers/AthenticationController');
-const AuthenticationControllerPolicy = require('./polocies/AuthenticationControllerPolicy');
+const AuthenticationControllerPolicy = require('./policies/AuthenticationControllerPolicy');
 const SongsController = require('./controllers/SongsController');
 
 function findOne(model, obj) {
@@ -16,11 +16,8 @@ function findOne(model, obj) {
 
 module.exports = (app) => {
     app.get('/', (req, res) => {
-        res.send('SongBook is server is up and running');
-    });
-    app.get('/status', (req, res) => {
         res.send({
-            message: 'SongBook App By MagusM'
+            message: 'SongBook is server is up and running'
         });
     });
     
