@@ -37,10 +37,17 @@ module.exports = {
     },
     async save (req, res) {
         try {
-            // const song = await Song.create(req.body);
-            const song = {};
-            res.send(song);
+            const song = new Song(req.body);
+            // TODO: make a check if song exist!!! 
+            song.save((err) => {
+                if (!err) {
+                    res.send(song);
+                } else {
+                    throw err;
+                }
+            });
         } catch (error) {
+            console.log('err: ', error);
             res.status(500).send({
                 error: 'Saving song failed, please try again later or contact support.'
             });
