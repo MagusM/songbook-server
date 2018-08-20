@@ -27,19 +27,17 @@ User.prototype.comparePassword = (password, hash) => {
 
 module.exports = User;
 module.exports.hashPassword = hashPassword;
-module.exports.createUser = async (user, callback) => {
+module.exports.createUser = (user, callback) => {
     hashPassword(user.password)
         .then((hashed) => {
             user.password = hashed;
             user.save(callback);
     });    
 };
-module.exports.comparePassword = async (candidatePassword, hash, callback) => {
-    bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
-        callback(null, isMatch);
-    });
+module.exports.comparePassword = (candidatePassword, hash, callback) => {
+    bcrypt.compare(candidatePassword, hash, callback);
 };
 
-module.exports.getUserById = async (id, callback) => {
+module.exports.getUserById = (id, callback) => {
     User.findById(id, callback);
 };

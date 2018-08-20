@@ -42,23 +42,30 @@ module.exports = {
             User.findOne({email: email}, (err, user) => {
                 if (err) {
                     throw err;
-                }
-                if (!user) {
+                } 
+                else if (!user) {
                     res.status(403).send({
                         error: 'No user found'
                     });
                 }
-                const isPasswordValid = User.isPasswordValid(password, user.password);
-                if (!isPasswordValid) {
-                    res.status(403).send({
-                        error: 'The logging information was incorrect'
+                else {
+                    User.comparePassword(password, user.password, (error, isPasswordValid) => {
+                        if (error) {
+                            throw error;
+                        } 
+                        else if(!isPasswordValid) {
+                            res.status(403).send({
+                                error: 'The logging information was incorrect'
+                            });
+                        }
+                        else {
+                            res.send({
+                                user: user.toJSON(),
+                                token: jwtSignUser(user.toJSON())
+                            });
+                        }
                     });
-                } else {
-                    res.send({
-                        user: user.toJSON(),
-                        token: jwtSignUser(user.toJSON())
-                    });
-                }    
+                }
             });
         } catch (error) {
             res.status(500).send({
