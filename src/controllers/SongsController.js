@@ -38,14 +38,21 @@ module.exports = {
     async save (req, res) {
         try {
             const song = new Song(req.body);
-            // TODO: make a check if song exist!!! 
-            song.save((err) => {
-                if (!err) {
-                    res.send(song);
-                } else {
-                    throw err;
-                }
-            });
+            let isSongExist = await Song.find({title: song.title, artist: song.artist});
+            if (isSongExist) {
+                res.status(400).send({
+                    message: "Song already exist",
+                    song: isSongExist
+                });
+            } else {
+                song.save((err) => {
+                    if (!err) {
+                        res.send(song);
+                    } else {
+                        throw err;
+                    }
+                });
+            }
         } catch (error) {
             console.log('err: ', error);
             res.status(500).send({
