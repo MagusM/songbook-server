@@ -1,5 +1,5 @@
 module.exports = {
-    port: '8081',
+    port: process.env.port || '8081',
     authentication: {
         jwsSecret: process.env.JSW_SECRET || 'secret'
     },
