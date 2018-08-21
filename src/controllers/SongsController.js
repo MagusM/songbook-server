@@ -18,17 +18,19 @@ module.exports = {
     },
     async songById(req, res) {
         try {
-            // const song = await Song.find({
-            //     where: req.params
-            // });
-            const song = {};
-            if (!song) {
-                res.send(500).send({
-                    error: 'Failed find song.'
-                });
-            } else {
-                res.send(song);
-            }
+            Song.find({_id: req.params.id}, (err, song) => {
+                if (err) {
+                    throw err;
+                }
+                else if(!song) {
+                    res.send(500).send({
+                        error: 'Failed find song.'
+                    });
+                }
+                else {
+                    res.send(song);
+                }
+            });
         } catch (error) {
             res.status(500).send({
                 error: 'An Error has accured with songs.'
@@ -62,10 +64,13 @@ module.exports = {
     },
     async update (req, res) {
         try {
-            const result = await Song.update(req.body, {
-                where: req.params
+            Song.update({_id: req.params.id}, req.body, (err, row) => {
+                if (err) {
+                    throw err;  
+                } else {
+                    res.status(200).send(row);
+                }
             });
-            res.send(result);
         } catch (error) {
             res.status(500).send({
                 // error: 'An Error has accured updating song.'
